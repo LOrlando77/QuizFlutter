@@ -1,0 +1,97 @@
+import 'package:flutter/material.dart';
+import 'result_page.dart';
+
+class QuizPage extends StatefulWidget {
+  const QuizPage({super.key});
+
+  @override
+  State<QuizPage> createState() => _QuizPageState();
+}
+
+class _QuizPageState extends State<QuizPage> {
+  int _currentQuestion = 0;
+  int _score = 0;
+
+  final List<Map<String, Object>> _questions = [
+    {
+      'question': 'Quanto é 5 + 3?',
+      'options': ['6', '7', '8', '9'],
+      'answer': '8',
+    },
+    {
+      'question': 'Quanto é 9 - 4?',
+      'options': ['5', '6', '4', '3'],
+      'answer': '5',
+    },
+    {
+      'question': 'Quanto é 3 x 4?',
+      'options': ['7', '12', '10', '14'],
+      'answer': '12',
+    },
+  ];
+
+  void _answerQuestion(String selectedOption) {
+    final correctAnswer = _questions[_currentQuestion]['answer'];
+
+    if (selectedOption == correctAnswer) {
+      _score++;
+    }
+
+    if (_currentQuestion < _questions.length - 1) {
+      setState(() {
+        _currentQuestion++;
+      });
+    } else {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ResultPage(score: _score, total: _questions.length),
+        ),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final current = _questions[_currentQuestion];
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Quiz'),
+        backgroundColor: Colors.deepPurple,
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Pergunta ${_currentQuestion + 1} de ${_questions.length}',
+              style: const TextStyle(fontSize: 20),
+            ),
+            const SizedBox(height: 20),
+            Text(
+              current['question'] as String,
+              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 30),
+            ...(current['options'] as List<String>).map((option) {
+              return Container(
+                width: double.infinity,
+                margin: const EdgeInsets.only(bottom: 12),
+                child: ElevatedButton(
+                  onPressed: () => _answerQuestion(option),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.deepPurple,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                  ),
+                  child: Text(option, style: const TextStyle(fontSize: 18)),
+                ),
+              );
+            }),
+          ],
+        ),
+      ),
+    );
+  }
+}
